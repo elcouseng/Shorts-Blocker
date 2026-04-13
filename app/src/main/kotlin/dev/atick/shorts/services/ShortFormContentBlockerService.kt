@@ -48,6 +48,9 @@ class ShortFormContentBlockerService : AccessibilityService() {
     private val actionCooldownMillis = 1500L
     private val userPreferencesProvider by lazy { UserPreferencesProvider(applicationContext) }
 
+    @Volatile
+    private var currentEnabledPackages: Set<String> = emptySet()
+
     private val job = SupervisorJob()
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
@@ -64,6 +67,7 @@ class ShortFormContentBlockerService : AccessibilityService() {
         userPreferencesProvider.getTrackedPackages()
             .onEach { packages ->
                 Timber.d("Tracked packages updated: ${packages.joinToString()}")
+                currentEnabledPackages = packages.toSet()
                 val info = AccessibilityServiceInfo().apply {
                     eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
                         AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
@@ -98,8 +102,14 @@ class ShortFormContentBlockerService : AccessibilityService() {
                     "className=${event.className}, package=$packageName",
             )
 
-            // Get the appropriate detector for this package
-            val detector = packageName?.let { detectors[it] }
+            // Empty serviceInfo.packageNames delivers events from all packages,
+            // so we must filter against the user's toggle state here too.
+            if (packageName == null || packageName !in currentEnabledPackages) {
+                Timber.v("Package not in enabled set: $packageName")
+                return
+            }
+
+            val detector = detectors[packageName]
             if (detector == null) {
                 Timber.v("No detector found for package: $packageName")
                 return

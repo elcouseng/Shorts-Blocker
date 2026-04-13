@@ -24,30 +24,9 @@ import timber.log.Timber
 /**
  * Detector for Instagram Reels short-form content.
  *
- * This detector identifies when a user is actively watching Instagram Reels using
- * a two-pronged detection strategy: explicit Reels tab detection and fullscreen
- * media detection.
- *
- * **Detection Strategy:**
- * 1. **Reels Tab Detection**: Checks if "clips_tab" element exists and is selected
- * 2. **Fullscreen Detection**: Detects fullscreen media viewing when feed_tab is absent
- *
- * The dual strategy accounts for Instagram's various entry points to Reels content
- * (dedicated tab, explore page, profile reels, etc.)
- *
- * **Implementation Details:**
- * - Scans up to 10 nodes (shallow scan for performance)
- * - Uses feed_tab absence as indicator of fullscreen viewing
- * - Instagram uses "clips_viewer" for all video content, requiring careful detection
- *
- * **Known Limitations:**
- * - May trigger on fullscreen regular posts (rare false positives)
- * - Detection patterns may break after Instagram app updates
- * - Does not distinguish between Reels in feed vs dedicated viewing
- *
- * **Compatibility:**
- * - Tested with Instagram app versions 300.x - 320.x
- * - May require updates for major Instagram redesigns
+ * Fires when the user is either on the Reels tab (`clips_tab` selected in the
+ * bottom nav) or inside Instagram's fullscreen Clips viewer (`clips_viewer_action_bar_title`
+ * present in the tree — covers Reels opened from a DM, from search, etc.).
  */
 class InstagramReelsDetector : ShortFormContentDetector {
 
@@ -58,30 +37,24 @@ class InstagramReelsDetector : ShortFormContentDetector {
         rootNode: AccessibilityNodeInfo,
         resources: Resources,
     ): Boolean {
-        // Instagram uses clips_viewer for everything, so we need to be very specific
-        // Check if we're in the Reels tab/activity specifically
-
-        val className = event.className?.toString()
-        Timber.v("[Instagram] Event className: $className")
-
         val stack = ArrayDeque<AccessibilityNodeInfo>()
         stack.add(rootNode)
         var nodesScanned = 0
-        var feedTabCount = 0
 
-        while (stack.isNotEmpty() && nodesScanned < 10) {
+        while (stack.isNotEmpty() && nodesScanned < 150) {
             val n = stack.removeFirst()
             nodesScanned++
 
-            val id = n.viewIdResourceName
-
-            if (id != null && ("feed_tab" in id)) {
-                feedTabCount++
-            }
-
-            if (id != null && ("clips_tab" in id && n.isSelected)) {
-                Timber.i("[Instagram] ✓ User is actively watching Reels in Reels tab")
-                return true
+            val id = n.viewIdResourceName?.lowercase()
+            if (id != null) {
+                if ("clips_tab" in id && n.isSelected) {
+                    Timber.i("[Instagram] ✓ Reels tab is selected")
+                    return true
+                }
+                if ("clips_viewer_action_bar_title" in id) {
+                    Timber.i("[Instagram] ✓ Fullscreen Clips viewer detected")
+                    return true
+                }
             }
 
             for (i in 0 until n.childCount) {
@@ -89,10 +62,6 @@ class InstagramReelsDetector : ShortFormContentDetector {
             }
         }
 
-        if (feedTabCount == 0) {
-            Timber.i("[Instagram] ✓ User is actively watching Media in Fullscreen")
-            return true
-        }
         return false
     }
 }
