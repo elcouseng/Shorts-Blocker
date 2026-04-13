@@ -23,6 +23,7 @@ import android.os.SystemClock
 import android.view.accessibility.AccessibilityEvent
 import dev.atick.shorts.services.detectors.InstagramReelsDetector
 import dev.atick.shorts.services.detectors.ShortFormContentDetector
+import dev.atick.shorts.services.detectors.SnapchatSpotlightDetector
 import dev.atick.shorts.services.detectors.YouTubeShortsDetector
 import dev.atick.shorts.utils.UserPreferencesProvider
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +59,7 @@ class ShortFormContentBlockerService : AccessibilityService() {
         mapOf(
             "com.google.android.youtube" to YouTubeShortsDetector(),
             "com.instagram.android" to InstagramReelsDetector(),
+            "com.snapchat.android" to SnapchatSpotlightDetector(),
         )
     }
 
@@ -118,13 +120,16 @@ class ShortFormContentBlockerService : AccessibilityService() {
             val windows = windows
             Timber.v("Inspecting ${windows.size} windows for package: $packageName")
             for (win in windows) {
-                // Only process focused application windows
-                if (!win.isFocused || !win.isActive) {
-                    Timber.v("Skipping non-focused/inactive window")
+                val root = win.root ?: continue
+                // Snapchat (and other apps using SurfaceViews) don't reliably
+                // mark their windows as focused even when in the foreground, so
+                // we can't filter on win.isFocused/isActive. Instead, only scan
+                // roots whose package matches the event's package.
+                if (root.packageName?.toString() != packageName) {
+                    Timber.v("Skipping window from ${root.packageName}")
                     continue
                 }
 
-                val root = win.root ?: continue
                 if (detector.isShortFormContent(event, root, resources)) {
                     Timber.i("[$packageName] Short-form content detected!")
                     val key = "${packageName}_content_detected"

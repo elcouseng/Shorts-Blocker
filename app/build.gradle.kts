@@ -26,8 +26,6 @@ val keystorePropertiesFile: File = rootProject.file("keystore.properties")
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.gms)
-    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.dokka)
 }
 
@@ -140,10 +138,6 @@ dependencies {
 
     implementation(libs.androidx.dataStore.core)
     implementation(libs.androidx.dataStore.preferences)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
 
     dokkaPlugin(libs.dokka.android.plugin)
     dokkaPlugin(libs.dokka.mermaid.plugin)

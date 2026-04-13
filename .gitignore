@@ -63,3 +63,9 @@ GEMINI.local.md
 CLAUDE.local.md
 CHECKLIST.local.md
 CHANGELOG.local.md
+
+# Local UI hierarchy dumps captured during detector discovery
+snap_dumps/
+
+# Personal scratch / screenshots / notes — never commit
+to_delete/

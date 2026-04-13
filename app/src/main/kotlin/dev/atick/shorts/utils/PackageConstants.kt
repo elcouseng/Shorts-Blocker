@@ -28,19 +28,28 @@ object PackageConstants {
     /** Instagram app package identifier */
     const val INSTAGRAM_PACKAGE = "com.instagram.android"
 
+    /** Snapchat app package identifier */
+    const val SNAPCHAT_PACKAGE = "com.snapchat.android"
+
     /** List of all available packages that can be tracked */
     val AVAILABLE_PACKAGES = listOf(
         TrackedPackage(
             packageName = YOUTUBE_PACKAGE,
             displayName = "YouTube",
             description = "Block YouTube Shorts",
-            isEnabled = false,
+            isEnabled = true,
         ),
         TrackedPackage(
             packageName = INSTAGRAM_PACKAGE,
             displayName = "Instagram",
             description = "Block Instagram Reels",
-            isEnabled = false,
+            isEnabled = true,
+        ),
+        TrackedPackage(
+            packageName = SNAPCHAT_PACKAGE,
+            displayName = "Snapchat",
+            description = "Block Snapchat Spotlight and Stories",
+            isEnabled = true,
         ),
     )
 
