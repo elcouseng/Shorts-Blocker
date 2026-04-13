@@ -209,7 +209,7 @@ private fun WelcomePage(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Welcome to Shorts Blocker",
+            text = "Welcome to Toti Zit Blocko",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -219,7 +219,8 @@ private fun WelcomePage(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Take back control of your time by automatically blocking YouTube Shorts and Instagram Reels.",
+            text = "Take back control of your time by automatically blocking " +
+                "YouTube Shorts, Instagram Reels, and Snapchat Spotlight.",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -283,14 +284,14 @@ private fun HowItWorksPage(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "When Shorts or Reels are detected, the app returns you to the main feed automatically.",
+            text = "When short-form content is detected, the app returns you to the main feed automatically.",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         // YouTube Flow
         FlowDiagram(
@@ -298,11 +299,19 @@ private fun HowItWorksPage(modifier: Modifier = Modifier) {
             platformIcon = Icons.Rounded.PlayArrow,
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Instagram Flow
         FlowDiagram(
             platformName = "Instagram Reels",
+            platformIcon = Icons.Rounded.PlayArrow,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Snapchat Flow
+        FlowDiagram(
+            platformName = "Snapchat Spotlight",
             platformIcon = Icons.Rounded.PlayArrow,
         )
     }

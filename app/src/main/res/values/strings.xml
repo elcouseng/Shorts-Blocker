@@ -16,7 +16,7 @@
 -->
 
 <resources>
-    <string name="app_name">Shorts Blocker</string>
+    <string name="app_name">Toti Zit Blocko</string>
     
     <!-- Service Status -->
     <string name="service_active">Service Active</string>

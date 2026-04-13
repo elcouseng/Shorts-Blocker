@@ -105,8 +105,10 @@ fun ProminentDisclosureScreen(
             DisclosureCard(
                 icon = Icons.Rounded.Settings,
                 title = "What This App Uses",
-                content = "This app uses the AccessibilityService API to block YouTube Shorts and Instagram Reels.\n\n" +
-                    "The AccessibilityService allows the app to detect when Shorts or Reels are opened and prevent them from playing.",
+                content = "This app uses the AccessibilityService API to block YouTube Shorts, " +
+                    "Instagram Reels, and Snapchat Spotlight.\n\n" +
+                    "The AccessibilityService allows the app to detect when short-form content " +
+                    "is opened and prevent it from playing.",
             )
 
             Spacer(modifier = Modifier.height(16.dp))
